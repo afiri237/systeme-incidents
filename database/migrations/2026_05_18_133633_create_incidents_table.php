@@ -9,10 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void {
+    public function up(): void
+{
+    // On désactive la vérification des clés étrangères pour ce script
+    Schema::disableForeignKeyConstraints();
+    Schema::dropIfExists('incidents');
 
-     Schema::dropIfExists('incidents'); 
-     
     Schema::create('incidents', function (Blueprint $table) {
         $table->id();
         $table->string('title');
@@ -22,9 +24,11 @@ return new class extends Migration
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->foreignId('technician_id')->nullable()->constrained('users')->onDelete('set null');
         $table->foreignId('category_id')->constrained()->onDelete('cascade');
-        $table->timestamps(); // Garde-le une seule fois ici à la fin
-        $table->foreignId('equipment_id')->nullable()->constrained('equipment');
+        $table->foreignId('equipment_id')->nullable()->constrained('equipment'); // Ça marchera car equipment existera
+        $table->timestamps();
     });
+
+    Schema::enableForeignKeyConstraints();
 }
 
     /**
